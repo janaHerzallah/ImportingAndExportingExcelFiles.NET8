@@ -1,0 +1,6 @@
+@ExcelProject.NET8_HostAddress = http://localhost:5114
+
+GET {{ExcelProject.NET8_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
