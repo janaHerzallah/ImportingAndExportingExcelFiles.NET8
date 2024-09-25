@@ -9,28 +9,40 @@
     {
         public byte[] GenerateExcel<T>(List<T> data, string sheetName)
         {
+
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
             using (var package = new ExcelPackage())
             {
                 var worksheet = package.Workbook.Worksheets.Add(sheetName);
 
-                // Load data into worksheet
+                // loadFromCollection method loads the list data into the worksheet starting at cell A1
+                //true argument indicates that the method should use the property names of the objects in the list as the headers of the columns.
+
                 worksheet.Cells["A1"].LoadFromCollection(data, true);
 
-                // Return the Excel file as byte array
+                //the byte array is used to return the Excel file to the client as a file download.
                 return package.GetAsByteArray();
+
+                /*This method takes a list of data, generates an Excel file with the data,
+                 * and returns the Excel file as a byte array, which can be sent to the client as a downloadable file.*/
             }
         }
 
+        // read the content of a file and then convert it to a list of objects of type T
+        // type T means that the method can read any type of object from an Excel file
+        // so we can specify the the type of object we want to read from the Excel file
 
-        public List<T> ReadExcelFile<T>(IFormFile file) where T : new()
+        public List<T> ReadExcelFile<T>(IFormFile file) where T : new() // new() constraint means that the type T must have a parameterless constructor
+            //IFormFile interface represents a file sent with an HTTP request.
+
         {
             var dataList = new List<T>();
 
             using (var stream = new MemoryStream())
             {
-                file.CopyTo(stream);
+                file.CopyTo(stream); //Copying the Uploaded File to a MemoryStream:
+
                 using (var package = new ExcelPackage(stream))
                 {
                     var worksheet = package.Workbook.Worksheets[0]; // Read from the first sheet
